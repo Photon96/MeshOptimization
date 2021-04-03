@@ -28,7 +28,8 @@ function [quality, i] = CalcQualityTetraVLrms(tetras, positions)
 
     V = alfa;
     c = sqrt(2);
-    quality = c*V./Lrms.^3;
+%     quality = c*V./Lrms.^3;
+    quality = c*V./(Lrms.*Lrms.*Lrms);
 %     if alfa(id)<0
 %         quality = -quality;
 %     end
