@@ -1,6 +1,6 @@
 function [] = DrawQualityGraph(prev_qualities, qualities, xlabel_title)
     
-    feature('DefaultCharacterSet', 'windows-1252') %# for all Character support
+    feature('DefaultCharacterSet', 'windows-1252'); %# for all Character support
     nr_buckets = 30;
     buckets_ranges = linspace(0, 1, nr_buckets + 1);
     buckets_prev_quality = zeros(nr_buckets, 1);
@@ -20,9 +20,9 @@ function [] = DrawQualityGraph(prev_qualities, qualities, xlabel_title)
     hb = bar(buckets_ranges(2:end), log(Y));
     
     hb(2).FaceColor = [1,0.85,0.25];
-    ylabel('Elementy')
+    ylabel('Elementy');
     h = xlabel(xlabel_title, 'Interpreter', 'latex');
-    set(h, 'FontSize', 15) 
-    legend('siatka przed poprawą', 'siatka po poprawie', 'Location','northwest')
+    set(h, 'FontSize', 15); 
+    legend('siatka przed poprawą', 'siatka po poprawie', 'Location','northwest');
 end
 

@@ -1,7 +1,7 @@
 function [J, H] = FiniteDifference(vertex, tetras, positions, quality_function_handle)
     
     positions_prev = positions(vertex, :);
-    steps = [0.01, 0.01, 0.01];
+    steps = [0.001, 0.001, 0.001];
     
     %%%% JACOBIAN
     positions(vertex, 1) = positions(vertex, 1) + steps(1);
