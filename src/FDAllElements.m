@@ -21,7 +21,7 @@ function [J, H] = FDAllElements(vertex, tetras, positions, quality_function_hand
     positions(vertex, :) = positions_prev;
     
     positions(vertex, 3) = positions(vertex, 3) + steps(3);
-    f_dz = min(quality_function_handle(tetras, positions));
+    f_dz = quality_function_handle(tetras, positions);
     positions(vertex, 3) = positions(vertex, 3) - 2*steps(3);
     f_minus_dz = quality_function_handle(tetras, positions);
     fz = (f_dz - f_minus_dz)/(2*steps(3));
