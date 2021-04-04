@@ -1,7 +1,7 @@
 function [positions, possible_max_quality, found_max_quality] = ...
     GradientAscent(tetras, positions, steps, v, quality_function_handle)
     
-    current_quality = min(quality_function_handle(tetras, positions));
+    [current_quality, i] = min(quality_function_handle(tetras, positions));
     prev_quality = 0;
 
     alfa = steps';
@@ -11,9 +11,11 @@ function [positions, possible_max_quality, found_max_quality] = ...
         prev_quality = current_quality;
         prev_position = positions(v,:);
         
-        J = FiniteDifference(v, tetras, positions, quality_function_handle);
+%         J = FiniteDifference(v, tetras, positions, quality_function_handle);
+          J = VLrmsGradient(v, tetras, positions, i);
 %         J = FDAllElements(v, tetras, positions, quality_function_handle);
 %         J = J(:, current_i);
+%         J = J(:, i);
 %         H = H((current_i - 1)*3 + 1:(current_i - 1)*3 + 3,:);
         %%% Newton method using Jacobian and Hessian
 %         if all(eig(H) > 0) 
@@ -28,7 +30,7 @@ function [positions, possible_max_quality, found_max_quality] = ...
         new_position = prev_position + grad_direction';
  
         positions(v,:) = new_position;
-        current_quality = min(quality_function_handle(tetras, positions));
+        [current_quality, i] = min(quality_function_handle(tetras, positions));
     end
     
     if current_quality < prev_quality
