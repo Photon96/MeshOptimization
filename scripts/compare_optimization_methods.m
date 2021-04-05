@@ -7,7 +7,7 @@ tetras = mesh.tetrahedrons;
 free_nodes = mesh.free_nodes;
 quality_treshold = 0.35;
 
-alg_types = 5;
+alg_types = 6;
 prev_qualities = CalcQualityTetraVLrms(tetras, positions);
 
 for alg_type=1:alg_types
@@ -36,10 +36,14 @@ for alg_type=1:alg_types
         tolx = 1e-8;
         maxeval = 10;
         options = [tau tolg tolx maxeval];
-        infos(alg_type).algorithm = "Dump newton";
+        infos(alg_type).algorithm = "Damp newton";
     end
     
     if alg_type == 5
+        infos(alg_type).algorithm = "Quasi-Newton with BFGS";
+    end
+    
+    if alg_type == 6
         opts.max_k = 1;
         opts.quality_treshold = quality_treshold;
         opts.resolution = 0.01;
@@ -54,7 +58,7 @@ for alg_type=1:alg_types
     infos(alg_type).prev_tetras_worse_treshold = ...
         sum(CalcQualityTetraVLrms(tetras, positions) < quality_treshold);
     
-    if (alg_type >=0) && (alg_type <= 4) 
+    if (alg_type >=0) && (alg_type <= 5) 
         tic
         global_qualities = CalcQualityTetraVLrms(tetras, positions);
         nodes_optimize = GetNodesToOptimize(...
@@ -69,7 +73,11 @@ for alg_type=1:alg_types
                 X1 = dampnewton(@FunctionMetric,x0, options,...
                     node, adjacent_tetras, positions);
                 x = X1(:, end);
-            elseif alg_type ~= 5
+            elseif alg_type == 5
+                X1 = ucminf(@FunctionMetric,x0,[],[],...
+                    node, adjacent_tetras, positions);
+                x = X1(:, end);
+            elseif alg_type ~= 6
                 f = @(x)FunctionMetric(x, node, adjacent_tetras, positions);
                 x = fminunc(f,x0,options);
             end
@@ -79,7 +87,7 @@ for alg_type=1:alg_types
         duration = toc;
     end
     
-    if alg_type == 5
+    if alg_type == 6
         tic
         positions = OptimizeMesh(tetras, positions,...
               free_nodes, @CalcQualityTetraVLrms, opts);

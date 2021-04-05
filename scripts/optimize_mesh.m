@@ -5,7 +5,7 @@ positions = mesh.positions;
 tetras = mesh.tetrahedrons;
 free_nodes = mesh.free_nodes;
 
-max_k = 1;
+max_k = 3;
 resolution = 1/100; 
 quality_treshold = 0.35;
 
