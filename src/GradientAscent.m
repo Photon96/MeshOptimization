@@ -23,8 +23,9 @@ function [positions, possible_max_quality, found_max_quality] = ...
 %         else
 %            grad_direction = -J;
 %         end
+        
         grad_direction = J;
-
+    
         grad_direction = alfa.*grad_direction;
 
         new_position = prev_position + grad_direction';

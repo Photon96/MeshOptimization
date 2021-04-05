@@ -29,10 +29,10 @@ function [J, H] = FiniteDifference(vertex, tetras, positions, quality_function_h
     J = [fx; fy; fz];
     
     positions(vertex, :) = positions_prev;
-    %%% HESSIAN
-    f_xyz = min(quality_function_handle(tetras, positions));
     
+    %%% HESSIAN
     if nargout > 1
+        f_xyz = min(quality_function_handle(tetras, positions));
         fxx = (f_dx - 2*f_xyz + f_minus_dx)/(steps(1)*2);
         fyy = (f_dy - 2*f_xyz + f_minus_dy)/(steps(2)*2);
         fzz = (f_dz - 2*f_xyz + f_minus_dz)/(steps(3)*2);

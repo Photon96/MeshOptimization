@@ -16,7 +16,7 @@ function [] = DrawQualityGraph(prev_qualities, qualities, xlabel_title)
     
     
     Y = [reshape(buckets_prev_quality, nr_buckets, 1), reshape(buckets_quality, nr_buckets, 1)];
-    Y = 10*Y;
+%     Y = 10*Y;
     hb = bar(buckets_ranges(2:end), log(Y));
     
     hb(2).FaceColor = [1,0.85,0.25];

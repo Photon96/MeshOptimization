@@ -1,12 +1,12 @@
 clear all
 addpath('../src')
-load('../structures/example_mesh.mat');
+load('../structures/deformed_cube_mesh.mat');
 positions = mesh.positions;
 tetras = mesh.tetrahedrons;
 free_nodes = mesh.free_nodes;
 
 max_k = 1;
-resolution = 1/50; 
+resolution = 1/100; 
 quality_treshold = 0.35;
 
 prev_qualities1 = CalcQualityTetraVLrms(tetras, positions);
