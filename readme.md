@@ -50,6 +50,6 @@ $x_n = x_{n-1} + \eta \nabla f(x)$, gdzie  $\nabla f(x)$ to gradient $f(x)$, $\e
 - [x] porównanie metod optymalizacji czworościanu
 - [ ] ciąg dalszy nastąpi....
 
-### Zależności
+### Referencje
 
 - [immoptibox](http://www2.imm.dtu.dk/projects/immoptibox/): A MATLAB TOOLBOX FOR OPTIMIZATION AND DATA FITTING
