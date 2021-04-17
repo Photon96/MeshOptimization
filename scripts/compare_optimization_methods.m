@@ -7,7 +7,7 @@ tetras = mesh.tetrahedrons;
 free_nodes = mesh.free_nodes;
 quality_treshold = 0.35;
 
-alg_types = 6;
+alg_types = 7;
 prev_qualities = CalcQualityTetraVLrms(tetras, positions);
 
 for alg_type=1:alg_types
@@ -15,13 +15,13 @@ for alg_type=1:alg_types
     if alg_type == 1
         options = optimoptions('fminunc','Algorithm','quasi-newton',...
             'SpecifyObjectiveGradient', true, 'HessUpdate', 'dfp', 'Display', 'off', 'MaxIterations', 10);
-        infos(alg_type).algorithm = "Quasi-newton with dfp";
+        infos(alg_type).algorithm = "Quasi-Newton with dfp";
     end
     
     if alg_type == 2
         options = optimoptions('fminunc','Algorithm','quasi-newton',...
             'SpecifyObjectiveGradient', true, 'HessUpdate', 'steepdesc', 'Display', 'off', 'MaxIterations', 10);
-        infos(alg_type).algorithm = "Quasi-newton with steepdesc";
+        infos(alg_type).algorithm = "Quasi-Newton with steepdesc";
     end
     
     if alg_type == 3
@@ -40,10 +40,16 @@ for alg_type=1:alg_types
     end
     
     if alg_type == 5
-        infos(alg_type).algorithm = "Quasi-Newton with BFGS";
+        infos(alg_type).algorithm = "ucminf: Quasi-Newton with BFGS";
     end
     
     if alg_type == 6
+        options = optimoptions('fminunc','Algorithm','quasi-newton',...
+            'SpecifyObjectiveGradient', true, 'HessUpdate', 'bfgs', 'Display', 'off', 'MaxIterations', 10);
+        infos(alg_type).algorithm = "fminunc: Quasi-Newton with BFGS";
+    end
+    
+    if alg_type == 7
         opts.max_k = 1;
         opts.quality_treshold = quality_treshold;
         opts.resolution = 0.01;
@@ -53,12 +59,10 @@ for alg_type=1:alg_types
     
     infos(alg_type).prev_min_quality = ...
         min(CalcQualityTetraVLrms(tetras, positions));
-    infos(alg_type).prev_mean_quality = ...
-        mean(CalcQualityTetraVLrms(tetras, positions));
     infos(alg_type).prev_tetras_worse_treshold = ...
         sum(CalcQualityTetraVLrms(tetras, positions) < quality_treshold);
     
-    if (alg_type >=0) && (alg_type <= 5) 
+    if (alg_type >=0) && (alg_type <= 6) 
         tic
         global_qualities = CalcQualityTetraVLrms(tetras, positions);
         nodes_optimize = GetNodesToOptimize(...
@@ -77,9 +81,10 @@ for alg_type=1:alg_types
                 X1 = ucminf(@FunctionMetric,x0,[],[],...
                     node, adjacent_tetras, positions);
                 x = X1(:, end);
-            elseif alg_type ~= 6
+            else
                 f = @(x)FunctionMetric(x, node, adjacent_tetras, positions);
                 x = fminunc(f,x0,options);
+                
             end
 
             positions(node, :) = x;
@@ -87,20 +92,25 @@ for alg_type=1:alg_types
         duration = toc;
     end
     
-    if alg_type == 6
+    if alg_type == 7
         tic
         positions = OptimizeMesh(tetras, positions,...
               free_nodes, @CalcQualityTetraVLrms, opts);
         duration = toc;
     end
     
+    global_qualities = CalcQualityTetraVLrms(tetras, positions);
+    nodes_optimize_curr = GetNodesToOptimize(...
+        free_nodes, tetras, global_qualities, quality_treshold);
+    
     infos(alg_type).current_min_quality = ...
-        min(CalcQualityTetraVLrms(tetras, positions));
-    infos(alg_type).current_mean_quality = ...
-        mean(CalcQualityTetraVLrms(tetras, positions));
+        min(global_qualities);
     infos(alg_type).current_tetras_worse_treshold = ...
-        sum(CalcQualityTetraVLrms(tetras, positions) < quality_treshold);
+        sum(global_qualities < quality_treshold);
     infos(alg_type).duration = duration;
+    infos(alg_type).improved_tetras = ....
+        infos(alg_type).prev_tetras_worse_treshold - infos(alg_type).current_tetras_worse_treshold;
+    infos(alg_type).nodes_per_sec = round((length(nodes_optimize) - length(nodes_optimize_curr) )/duration); 
     
     positions = mesh.positions;
 end
@@ -109,9 +119,3 @@ for i=1:alg_types
     infos(i)
 end
 
-
-
-
-
-% figure(1);
-% DrawQualityGraph(prev_qualities1, current_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$');

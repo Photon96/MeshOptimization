@@ -10,7 +10,9 @@ resolution = 1/100;
 quality_treshold = 0.35;
 
 prev_qualities1 = CalcQualityTetraVLrms(tetras, positions);
-
+nodes_optimize_prev = GetNodesToOptimize(...
+          free_nodes, tetras, prev_qualities1, quality_treshold);
+      
 opts.max_k = max_k;
 opts.quality_treshold = quality_treshold;
 opts.resolution = resolution;
@@ -21,14 +23,19 @@ positions = OptimizeMesh(tetras, positions, free_nodes, @CalcQualityTetraVLrms, 
 info.duration = toc;
 
 current_qualities1 = CalcQualityTetraVLrms(tetras, positions);
-
+nodes_optimize_curr = GetNodesToOptimize(...
+          free_nodes, tetras, current_qualities1, opts.quality_treshold);
+      
 info.quality_treshold = quality_treshold;
 info.nr_iterations = max_k;
 info.min_prev_quality = min(prev_qualities1);
 info.mean_prev_quality = mean(prev_qualities1);
 info.min_current_quality = min(current_qualities1);
 info.mean_current_quality = mean(current_qualities1);
-
+info.improved_tetras = ....
+        sum(prev_qualities1 < quality_treshold) - sum(current_qualities1 < quality_treshold);
+info.nodes_per_sec = round((length(nodes_optimize_prev) - length(nodes_optimize_curr) )/info.duration); 
+    
 sprintf("Optimization info:")
 info
 
