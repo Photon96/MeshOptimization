@@ -11,8 +11,8 @@ function [positions, possible_max_quality, found_max_quality] = ...
         prev_quality = current_quality;
         prev_position = positions(v,:);
         
-%         J = FiniteDifference(v, tetras, positions, quality_function_handle);
-          J = VLrmsGradient(v, tetras, positions, i);
+%           [J,H] = FiniteDifference(v, tetras, positions, quality_function_handle);
+        J = VLrmsGradient(v, tetras, positions, i);
 %         J = FDAllElements(v, tetras, positions, quality_function_handle);
 %         J = J(:, current_i);
 %         J = J(:, i);

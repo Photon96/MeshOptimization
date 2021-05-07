@@ -7,7 +7,7 @@ free_nodes = mesh.free_nodes;
 
 max_k = 3;
 resolution = 1/100; 
-quality_treshold = 0.35;
+quality_treshold = 1/3;
 
 prev_qualities1 = CalcQualityTetraVLrms(tetras, positions);
 nodes_optimize_prev = GetNodesToOptimize(...
@@ -41,3 +41,10 @@ info
 
 figure(1);
 DrawQualityGraph(prev_qualities1, current_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$');
+figure(2)
+subplot(2,1,1)
+DrawQualityBar(prev_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$')
+title("Siatka przed poprawą")
+subplot(2,1,2)
+DrawQualityBar(current_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$')
+title("Siatka po poprawie")

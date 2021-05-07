@@ -28,6 +28,6 @@ function [] = DrawQualityBar(qualities, xlabel_title)
     xline(buckets_ranges(min_i));
     ylabel('Elementy');
     h = xlabel(xlabel_title, 'Interpreter', 'latex');
-    set(h, 'FontSize', 15); 
+%     set(h, 'FontSize', 15); 
 end
 
