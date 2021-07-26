@@ -1,4 +1,4 @@
-function [quality, i] = CalcQualityTetraVLrms(tetras, positions)
+function quality = CalcQualityTetraVLrms(tetras, positions)
     %funkcja obliczajaca minimalna jakosc tetów okreslona jako
     %2*sqrt(6)*V/Lrms
     %https://people.sc.fsu.edu/~jburkardt/presentations/cg_lab_tetrahedrons.pdf
@@ -12,10 +12,8 @@ function [quality, i] = CalcQualityTetraVLrms(tetras, positions)
     ab = A-B;
     ac = A-C;
     ad = A-D;
-
-    alfa = ab(:,1).* ( ac(:,2).* ad(:,3) - ac(:,3).* ad(:,2) ) ...
-      + ab(:,2).* ( ac(:,3).* ad(:,1) - ac(:,1).* ad(:,3) ) ...
-      + ab(:,3).* ( ac(:,1).* ad(:,2) - ac(:,2).* ad(:,1) )  ;
+    
+    V = CalcTetrahedraVolumes(ab, ac, ad);
     
     %oblicz dlugosci krawedzi
     Lab = sqrt(sum((A - B).^2,2)); 
@@ -26,12 +24,8 @@ function [quality, i] = CalcQualityTetraVLrms(tetras, positions)
     Lcd = sqrt(sum((C - D).^2,2)); 
     Lrms = sqrt(sum([Lab, Lac, Lad, Lbc, Lbd, Lcd].^2, 2)/6);
 
-    V = alfa;
-    c = sqrt(2);
-%     quality = c*V./Lrms.^3;
+    c = 6*sqrt(2);
     quality = c*V./(Lrms.*Lrms.*Lrms);
-%     if alfa(id)<0
-%         quality = -quality;
-%     end
+
 end
 

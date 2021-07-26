@@ -1,4 +1,6 @@
-function [grad, grad_Lrms] = VLrmsGradient(vertex, tetras, positions, min_tetr)
+function [grad, grad_Lrms] = VLrmsGradient(vertex, tetras, positions, min_tetr, quality_function_handle)
+    % przekazanie quality_function_handle tylko w celu zachowania spójności
+    % z interfejsem do FiniteDifference
     i = min_tetr;
     %for i=1:size(tetras, 1)
         tetras_current = tetras(i, :);

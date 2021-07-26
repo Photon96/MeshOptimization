@@ -1,4 +1,4 @@
-function [J, H] = FiniteDifference(vertex, tetras, positions, i, quality_function_handle)
+function [J, H] = FiniteDifferenceTest(vertex, tetras, positions, quality_function_handle)
     
     positions_prev = positions(vertex, :);
     steps = [0.001, 0.001, 0.001];

@@ -1,0 +1,6 @@
+function [determinants] = Calculate3x3Determinants(ab, ac, ad)
+    determinants = ab(:,1).* ( ac(:,2).* ad(:,3) - ac(:,3).* ad(:,2) ) ...
+      - ab(:,2).* ( ac(:,1).* ad(:,3) - ac(:,3).* ad(:,1) ) ...
+      + ab(:,3).* ( ac(:,1).* ad(:,2) - ac(:,2).* ad(:,1) );
+end
+

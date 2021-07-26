@@ -1,4 +1,4 @@
-function [] = DrawQualityBar(qualities, xlabel_title)
+function [] = DrawQualityHistogram(qualities, xlabel_title)
     feature('DefaultCharacterSet', 'windows-1252'); %# for all Character support
     nr_buckets = 50;
     buckets_ranges = linspace(0, 1, nr_buckets + 1);
@@ -24,8 +24,8 @@ function [] = DrawQualityBar(qualities, xlabel_title)
         patch([0 1 1 0]*V1(i,2)+V1L(i),[0 0 1 1]*V1(i,1), colors(i,:))
     end
     axis([0  1    0  max(ylim)])
-    [~, min_i] = min(abs(buckets_ranges - 1/3));
-    xline(buckets_ranges(min_i));
+%     [~, min_i] = min(abs(buckets_ranges - 1/3));
+%     xline(buckets_ranges(min_i));
     ylabel('Elementy');
     h = xlabel(xlabel_title, 'Interpreter', 'latex');
 %     set(h, 'FontSize', 15); 

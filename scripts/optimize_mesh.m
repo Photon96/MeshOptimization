@@ -1,50 +1,160 @@
 clear all
 addpath('../src')
-load('../structures/deformed_cube_mesh.mat');
-positions = mesh.positions;
-tetras = mesh.tetrahedrons;
-free_nodes = mesh.free_nodes;
+mesh = load('../structures/3D/deformed_cube_3k_el.mat');
+mesh.tetrahedra = SetTetrahedraInCorrectOrientation(mesh.tetrahedra, mesh.vertices);
 
-max_k = 3;
+%user settings
+available_quality_metrics = ["Mean-Ratio", "VLrms"];
+display_tetramesh = 0;
+quality_metric_name = available_quality_metrics(2);
+max_sweeps = 3;
 resolution = 1/100; 
-quality_treshold = 1/3;
+quality_treshold = 1;
+opts.algorithm = 'GD';
+opts.grid_points = 2;
+opts.diagnostics = false;
 
-prev_qualities1 = CalcQualityTetraVLrms(tetras, positions);
-nodes_optimize_prev = GetNodesToOptimize(...
-          free_nodes, tetras, prev_qualities1, quality_treshold);
-      
-opts.max_k = max_k;
+mean_ratio_label = '$\frac{3\left| det\left( AW^{-1}\right)\right|^{\frac{2}{3}}}{\| AW^{-1}\|_{F}^2 }$';
+vlrms_label = '$6 \sqrt{2}\frac{V}{L_{rms}^3}$';
+
+if strcmp(quality_metric_name, "Mean-Ratio")
+    quality_metric_label = mean_ratio_label;
+    quality_functions{1} = @CalcQualityTetraMeanRatio;
+    quality_functions{2} = @FiniteDifference;
+elseif strcmp(quality_metric_name, "VLrms")
+    quality_metric_label = vlrms_label;
+    quality_functions{1} = @CalcQualityTetraVLrms;
+    quality_functions{2} = @VLrmsGradient;
+end
+
+
+quality_metric = quality_functions{1};
+prev_qualities = quality_metric(mesh.tetrahedra, mesh.vertices);
+
+fig1 = figure();
+subplot(3,2,[1,2])
+DrawQualityHistogram(prev_qualities, quality_metric_label)
+title("Siatka przed poprawą")
+fig2 = figure();
+subplot(3,2,[1,2])
+DrawDihedralAnglesHistogram(CalculateDihedralAngles(mesh))
+title("Siatka przed poprawą")
+
+PrintMeshInfo(mesh)
+fprintf("\n\n------- Before optimization -------\n\n")
+PrintMeshQualityStats(prev_qualities, quality_metric_name)
+
+
+if display_tetramesh
+    figure()
+    poor_tetras = prev_qualities < 1/3;
+%     subplot(2,1,1)
+    tetramesh(mesh.tetrahedra, mesh.vertices, 'facecolor','none');
+    hold on
+    tetramesh(mesh.tetrahedra(poor_tetras,:), mesh.vertices, 'facecolor', 'red');
+end
+
+opts.max_sweeps = max_sweeps;
 opts.quality_treshold = quality_treshold;
 opts.resolution = resolution;
+
+tic
+[mesh, processed_nodes] = OptimizeMesh(mesh, quality_functions, opts);
+duration = toc;
+
+current_qualities = quality_metric(mesh.tetrahedra, mesh.vertices);
+      
+opt_info = SetOptimizationInfo(opts, prev_qualities, current_qualities, processed_nodes, duration);
+
+fprintf("\n\n------- After GD optimization -------\n\n")
+PrintMeshQualityStats(current_qualities, quality_metric_name)
+PrintOptimizationInfo(opt_info)
+
+if display_tetramesh
+    poor_tetras = current_qualities < 1/3;
+    subplot(2,1,2)
+%     tetramesh(tetras, positions, 'facecolor','none');
+%     hold on
+    tetramesh(mesh.tetrahedra(tetras(poor_tetras,:)), mesh.vertices, 'facecolor', 'red');
+%     hold off
+end
+
+% figure();
+% DrawQualityGraph(prev_qualities, current_qualities, quality_metric_label);
+
+figure(fig1)
+subplot(3,2,3)
+DrawQualityHistogram(current_qualities, quality_metric_label)
+title(opts.algorithm)
+
+figure(fig2)
+subplot(3,2,3)
+DrawDihedralAnglesHistogram(CalculateDihedralAngles(mesh))
+title(opts.algorithm)
+
+mesh = load('../structures/3D/deformed_cube_3k_el.mat');
+mesh.tetrahedra = SetTetrahedraInCorrectOrientation(mesh.tetrahedra, mesh.vertices);
+
+opts.algorithm = 'DMO';
+opts.grid_points = 3;
 opts.diagnostics = false;
 
 tic
-positions = OptimizeMesh(tetras, positions, free_nodes, @CalcQualityTetraVLrms, opts);
-info.duration = toc;
+[mesh, processed_nodes] = OptimizeMesh(mesh, quality_functions, opts);
+duration = toc;
 
-current_qualities1 = CalcQualityTetraVLrms(tetras, positions);
-nodes_optimize_curr = GetNodesToOptimize(...
-          free_nodes, tetras, current_qualities1, opts.quality_treshold);
+current_qualities = quality_metric(mesh.tetrahedra, mesh.vertices);
       
-info.quality_treshold = quality_treshold;
-info.nr_iterations = max_k;
-info.min_prev_quality = min(prev_qualities1);
-info.mean_prev_quality = mean(prev_qualities1);
-info.min_current_quality = min(current_qualities1);
-info.mean_current_quality = mean(current_qualities1);
-info.improved_tetras = ....
-        sum(prev_qualities1 < quality_treshold) - sum(current_qualities1 < quality_treshold);
-info.nodes_per_sec = round((length(nodes_optimize_prev) - length(nodes_optimize_curr) )/info.duration); 
-    
-sprintf("Optimization info:")
-info
+opt_info = SetOptimizationInfo(opts, prev_qualities, current_qualities, processed_nodes, duration);
 
-figure(1);
-DrawQualityGraph(prev_qualities1, current_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$');
-figure(2)
-subplot(2,1,1)
-DrawQualityBar(prev_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$')
-title("Siatka przed poprawą")
-subplot(2,1,2)
-DrawQualityBar(current_qualities1, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$')
-title("Siatka po poprawie")
+fprintf("\n\n------- After DMO optimization -------\n\n")
+PrintMeshQualityStats(current_qualities, quality_metric_name)
+PrintOptimizationInfo(opt_info)
+
+figure(fig1)
+subplot(3,2,4)
+DrawQualityHistogram(current_qualities, quality_metric_label)
+title(opts.algorithm)
+
+figure(fig2)
+subplot(3,2,4)
+DrawDihedralAnglesHistogram(CalculateDihedralAngles(mesh))
+title(opts.algorithm)
+
+mesh = load('../structures/3D/mesquite_sd_optimized_cube_3k_el.mat');
+mesh.tetrahedra = SetTetrahedraInCorrectOrientation(mesh.tetrahedra, mesh.vertices);
+current_qualities = quality_metric(mesh.tetrahedra, mesh.vertices);
+improved_tets = sum(prev_qualities < current_qualities) - sum(prev_qualities > current_qualities);
+
+figure(fig1)
+subplot(3,2,5)
+DrawQualityHistogram(current_qualities, quality_metric_label)
+title("Mesquite Steepest Descent")
+
+figure(fig2)
+subplot(3,2,5)
+DrawDihedralAnglesHistogram(CalculateDihedralAngles(mesh))
+title("Mesquite Steepest Descent")
+
+fprintf("\n\n------- After SD optimization -------\n\n")
+PrintMeshQualityStats(quality_metric(mesh.tetrahedra, mesh.vertices), quality_metric_name)
+fprintf("Improved tets: %i\n", improved_tets)
+
+mesh = load('../structures/3D/optimized_smart_laplacian_cube_3k_el.mat');
+mesh.tetrahedra = SetTetrahedraInCorrectOrientation(mesh.tetrahedra, mesh.vertices);
+
+current_qualities = quality_metric(mesh.tetrahedra, mesh.vertices);
+improved_tets = sum(prev_qualities < current_qualities) - sum(prev_qualities > current_qualities);
+figure(fig1)
+subplot(3,2,6)
+DrawQualityHistogram(current_qualities, quality_metric_label)
+title("Mesquite Smart Laplacian")
+
+figure(fig2)
+subplot(3,2,6)
+DrawDihedralAnglesHistogram(CalculateDihedralAngles(mesh))
+title("Mesquite Smart Laplacian")
+
+fprintf("\n\n------- After Smart Laplacian optimization -------\n\n")
+PrintMeshQualityStats(quality_metric(mesh.tetrahedra, mesh.vertices), quality_metric_name)
+fprintf("Improved tets: %i\n", improved_tets)
