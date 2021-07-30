@@ -15,19 +15,47 @@ surface = mesh.surface;
 % free_nodes = find(~(ind_x | ind_y | ind_z));
 
 positions = mesh.vertices;
-% for i=1:10
-tets_to_change = rand(length(free_nodes), 1) > 0.3;
-tets_to_change = free_nodes(tets_to_change);
-a = -0.05;
-b = 0.05;
-min_quality = 0;
-prev_positions = positions;
-while (min_quality <= 0)
-    positions = prev_positions;
-    r = a + (b-a).*rand(length(tets_to_change), 3);
-    positions(tets_to_change, :) = positions(tets_to_change,:) + r;
-    min_quality = min(CalcQualityTetraVLrms(tetras, positions));
-% end
+
+for i=1:2000
+    qualities = CalcQualityTetraVLrms(tetras, positions);
+    good_qualities = qualities > 0.3;
+    tets_good_qualities = tetras(good_qualities,:);
+    
+    chosen_tets = rand(length(tets_good_qualities), 1) > 0.3;
+    tets_to_change = tets_good_qualities(chosen_tets, :);
+    unique_vertices = unique(tets_to_change(:));
+    
+    % wybierz te wierzcholki, ktore naleza do zbioru wolnych wierzcholkow
+    % wierzcholki niektorych tetow moga byc na powierzchni struktury -
+    % pozbywamy sie ich
+    vertices_to_change = intersect(unique_vertices, free_nodes);
+
+    a = -0.05;
+    b = 0.05;
+    min_quality = 0;
+    prev_positions = positions(vertices_to_change,:);
+    while (min_quality <= 0)
+        positions(vertices_to_change,:) = prev_positions(vertices_to_change,:);
+        r = a + (b-a).*rand(length(vertices_to_change), 3);
+        positions(vertices_to_change, :) = positions(vertices_to_change,:) + r;
+        qualities = CalcQualityTetraVLrms(tetras, positions);
+        min_quality = min(qualities);
+
+%         valid_elements = qualities > 0;
+%         invalid_tets = setdiff(find(chosen_tets), find(valid_elements));
+%         vertices_invalid_tets = unique(tetras(invalid_tets(:)));
+%         vertices_to_change = intersect(vertices_invalid_tets, free_nodes);
+%         tets_to_change = tetras(invalid_tets);
+%         vertices_valid_elements = tets_to_change(valid_elements, :);
+%         vertices_valid_elements = unique(vertices_valid_elements(:));
+%         vertices_to_change = setdiff(vertices_to_change, vertices_valid_elements);
+%         positions(vertices_invalid_tets,:) = prev_positions(vertices_invalid_tets,:);
+        a = a/2;
+        b = b/2;
+        
+        %dodac wykluczenie quality(wierzcholek) > 0 z kolejnej iteracji
+
+    end
 end
 qualities = CalcQualityTetraVLrms(tetras, positions);
 poor_tetras = qualities < quality_treshold;

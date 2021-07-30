@@ -90,7 +90,7 @@ def convert_mat_to_vtk(file_name):
     output_mesh += "LOOKUP_TABLE default\n"
     
     is_surface = np.ones(shape=(nr_vertices, 1))
-    is_surface[input_mesh['free_vertices'] - 1] = 0
+    is_surface[(input_mesh['free_vertices'].flatten() - 1).astype(int)] = 0
     # print(input_mesh['free_vertices'])
     # print(is_surface)
 
