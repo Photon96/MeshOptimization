@@ -1,4 +1,4 @@
-function [] = DrawQualityHistogram(qualities, xlabel_title)
+function [max_y] = DrawQualityHistogram(qualities, xlabel_title)
     feature('DefaultCharacterSet', 'windows-1252'); %# for all Character support
     nr_buckets = 50;
     buckets_ranges = linspace(0, 1, nr_buckets + 1);
@@ -29,5 +29,6 @@ function [] = DrawQualityHistogram(qualities, xlabel_title)
     ylabel('Elementy');
     h = xlabel(xlabel_title, 'Interpreter', 'latex');
 %     set(h, 'FontSize', 15); 
+    max_y = max(ylim);
 end
 

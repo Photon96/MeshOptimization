@@ -8,5 +8,6 @@ function [info] = SetOptimizationInfo(...
     info.nr_iterations = opts.max_sweeps;
     info.improved_tets = sum(prev_qualities < current_qualities) - sum(prev_qualities > current_qualities);
     info.nodes_per_sec = info.processed_nodes/info.duration;
+    info.poor_tets = sum(current_qualities < 0.33);
 end
 

@@ -120,6 +120,7 @@ function [info, positions] = TestOptimizationMethod(method, positions, tetras, f
     info.quality_treshold = quality_treshold;
     info.prev_tetras_worse_treshold = prev_tetras_worse_treshold;
     info.current_tetras_worse_treshold = current_tetras_worse_treshold;
+    info.poor_tets = sum(current_qualities < 1/3);
     %     info.nodes_per_sec = round((length(nodes_optimize) - length(nodes_optimize_curr) )/duration); 
 end
 

@@ -5,6 +5,7 @@ function [] = PrintMeshQualityStats(qualities, quality_metric)
     fprintf("Average:        %.3f\n", mean(qualities))
     fprintf("RMS:            %.3f\n", sqrt(sum(qualities.^2)/length(qualities)))
     fprintf("Maximum:        %.3f\n", max(qualities))
-    fprintf("Std. dev.:      %.3f\n\n", std(qualities))
+    fprintf("Std. dev.:      %.3f\n", std(qualities))
+    fprintf("Tets < 0.33:    %i\n", sum(qualities < 1/3));
 end
 
