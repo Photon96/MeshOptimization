@@ -1,12 +1,13 @@
 function [positions, possible_max_quality, found_max_quality] = ...
-    GradientAscent(tetras, positions, steps, v, quality_functions_handlers)
+    GradientDescent(tetras, positions, steps, v, quality_functions_handlers)
     
     quality_metric = quality_functions_handlers{1};
     quality_metric_gradient = quality_functions_handlers{2};
     [current_quality, i] = min(quality_metric(tetras, positions));
     prev_quality = 0;
 
-    alfa = steps';
+%     alfa = steps';
+    alfa = steps;
 %     prev_qualities = quality_function_handle(tetras, positions);
     while (current_quality > prev_quality)
        
@@ -18,6 +19,7 @@ function [positions, possible_max_quality, found_max_quality] = ...
 %         plot3(prev_position(1),prev_position(2),prev_position(3), 'r.')
 %           [J,H] = FiniteDifference(v, tetras, positions, quality_function_handle);
         J = quality_metric_gradient(v, tetras, positions, i, quality_metric);
+        
 %         J = FDAllElements(v, tetras, positions, quality_function_handle);
 %         J = J(:, current_i);
 %         J = J(:, i);
@@ -32,7 +34,9 @@ function [positions, possible_max_quality, found_max_quality] = ...
         grad_direction = J;
     
         grad_direction = alfa.*grad_direction;
-
+        if (norm(grad_direction) < 0.0001)
+            break
+        end
 %         new_position = prev_position + grad_direction';
 %         plot3(new_position(1),new_position(2),new_position(3), 'b.')
 %         positions(v,:) = new_position;
@@ -44,11 +48,11 @@ function [positions, possible_max_quality, found_max_quality] = ...
 %             [current_quality, i] = min(quality_metric(tetras, positions));
 %         end
         step = grad_direction;
-        new_position = prev_position + step';
+        new_position = prev_position + step;
         positions(v,:) = new_position;
         [current_quality,i] = min(quality_metric(tetras, positions));
         if current_quality < 1/3 && current_quality < prev_quality
-            [new_position, current_quality, i] = LineSearch(prev_position, positions, v, tetras, grad_direction, prev_quality, current_quality, quality_metric);
+            [new_position, current_quality, i] = LineSearch(prev_position, positions, v, tetras, prev_quality, grad_direction, quality_metric);
         end
         positions(v,:) = new_position;
     end
