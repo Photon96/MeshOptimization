@@ -1,0 +1,10 @@
+{
+	"mesh_file": "D:\\magisterka\\MeshOptimization\\structures\\3D\\mesquite comparison\\deformed_cube_3k_el_alg_comparison.mat",
+	"algorithm" : "GD",
+	"quality_metric": "Mean-Ratio",
+	"quality_treshold": 1,
+	"max_sweeps": 3,
+	"grid_points": 2,
+	"diagnostics": false,
+	"real_structure": false
+}

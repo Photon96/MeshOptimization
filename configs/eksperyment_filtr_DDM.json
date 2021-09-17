@@ -1,0 +1,11 @@
+{
+	"mesh_file": "D:\\magisterka\\MeshOptimization\\structures\\3D\\real structures\\deformed_d_Filtr_DDM_700_bad_tets",
+	"mesh_save": "D:\\magisterka\\MeshOptimization\\structures\\3D\\real structures\\optimized_test_d_Filtr_DDM_700_bad_tets",
+	"algorithm" : "DMO",
+	"quality_metric": "Volume-Length",
+	"quality_treshold": 0.33,
+	"max_sweeps": 3,
+	"grid_points": 2,
+	"real_structure": true,
+	"diagnostics": false
+}
