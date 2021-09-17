@@ -25,8 +25,8 @@ function [] = DrawQualityGraph(prev_qualities, qualities, xlabel_title)
     hb(1).FaceColor = darkred_color;
     hb(2).FaceColor = cyan_color;
     
-    ylabel('Elementy', 'Interpreter', 'latex');
-    xlabel(xlabel_title, 'Interpreter', 'latex');
+    ylabel('Liczba elementów');
+%     xlabel(xlabel_title, 'Interpreter', 'latex');
 %     set(h, 'FontSize', 15); 
     legend('Siatka przed poprawą', 'Siatka po poprawie', 'Location','northwest');
 end

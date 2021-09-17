@@ -48,12 +48,12 @@ function qualities = CalcQualityTetraMeanRatio(tetras, positions)
         norms(i) = norm([ab(i,:)' ac(i,:)' ad(i,:)']*W_inv, 'fro');
     end
     
-    if any(dets < 0 )
-        qualities = 0;
-        return
-    end
+    
     
     qualities = (3*dets.^(2/3))./(norms.^2);
+    if any(dets < 0 )
+        qualities = 0;
+    end
 
 end
 

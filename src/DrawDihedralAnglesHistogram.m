@@ -23,22 +23,23 @@ function [] = DrawDihedralAnglesHistogram(DA)
     colors = ones(nr_buckets + 1,1).*silver;
     
     colors(buckets_ranges < 40,:) = ones(sum(buckets_ranges < 40),3).*green;
-    colors(buckets_ranges > 140,:) = ones(sum(buckets_ranges > 140),3).*green;
+    colors(buckets_ranges >= 140,:) = ones(sum(buckets_ranges >= 140),3).*green;
     
     colors(buckets_ranges < 30,:) = ones(sum(buckets_ranges < 30),3).*yellow;
-    colors(buckets_ranges > 150,:) = ones(sum(buckets_ranges > 150),3).*yellow;
+    colors(buckets_ranges >= 150,:) = ones(sum(buckets_ranges >= 150),3).*yellow;
     
     colors(buckets_ranges < 20,:) = ones(sum(buckets_ranges < 20),3).*orange;
-    colors(buckets_ranges > 160,:) = ones(sum(buckets_ranges > 160),3).*orange;
+    colors(buckets_ranges >= 160,:) = ones(sum(buckets_ranges >= 160),3).*orange;
     
     colors(buckets_ranges < 10,:) = ones(sum(buckets_ranges < 10),3).*red;
-    colors(buckets_ranges > 170,:) = ones(sum(buckets_ranges > 170),3).*red;
+    colors(buckets_ranges >= 170,:) = ones(sum(buckets_ranges >= 170),3).*red;
   
     for i = 1:size(V1,1)
         h = patch([0 1 1 0]*V1(i,2)+V1L(i),[0 0 1 1]*V1(i,1), colors(i,:));
         h.EdgeColor = 'none';
     end
     yticks([])
+%     ylabel("Liczba elementów");
     axis([0  180    0  max(ylim)])
     min_DA = min(DA);
 %     min_DA = find(buckets_DA ~= 0,1,'first');
@@ -63,7 +64,5 @@ function [] = DrawDihedralAnglesHistogram(DA)
 %     ax.YAxis.Visible = 'off';   % remove y-axis    
 %     grid on;
 %     ax.XMinorGrid = 'on';
-    
-%     ylabel('Elementy');
 %     h = xlabel(xlabel_title, 'Interpreter', 'latex');
 end

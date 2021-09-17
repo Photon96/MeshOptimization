@@ -26,7 +26,7 @@ function [J, H] = FiniteDifference(vertex, tetras, positions, i, quality_functio
     f_minus_dz = min(quality_function_handle(tetras, positions));
     fz = (f_dz - f_minus_dz)/(2*steps(3));
     
-    J = [fx; fy; fz];
+    J = [fx fy fz];
     
     positions(vertex, :) = positions_prev;
     

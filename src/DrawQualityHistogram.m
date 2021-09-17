@@ -26,7 +26,7 @@ function [max_y] = DrawQualityHistogram(qualities, xlabel_title)
     axis([0  1    0  max(ylim)])
 %     [~, min_i] = min(abs(buckets_ranges - 1/3));
 %     xline(buckets_ranges(min_i));
-    ylabel('Elementy');
+    ylabel('Liczba elementów');
     h = xlabel(xlabel_title, 'Interpreter', 'latex');
 %     set(h, 'FontSize', 15); 
     max_y = max(ylim);
