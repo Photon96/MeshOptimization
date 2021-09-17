@@ -1,8 +1,9 @@
 clear all
+close all
 addpath('../src')
 addpath('../immoptibox')
 addpath('../poblano_toolbox')
-mesh = load('../structures/3D/deformed_cube_3k_el.mat');
+mesh = load('../structures/3D/optimization methods comparison/deformed_cube_3k_el.mat');
 mesh.tetrahedra = SetTetrahedraInCorrectOrientation(mesh.tetrahedra, mesh.vertices);
 positions = mesh.vertices;
 tetras = mesh.tetrahedra;
@@ -15,7 +16,7 @@ prev_qualities = CalcQualityTetraVLrms(tetras, positions);
 
 figure(1)
 subplot(2,1,1)
-DrawQualityHistogram(prev_qualities, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$')
+DrawQualityHistogram(prev_qualities, '')
 
 subplot(2,1,2)
 DrawDihedralAnglesHistogram(CalculateDihedralAngles(mesh));
@@ -41,7 +42,7 @@ for alg_type=1:length(algorithms)
     global_qualities = quality_function_handle(tetras, positions);
     figure(fig_quality);
     subplot(3,2,alg_type)
-    max_y = DrawQualityHistogram(global_qualities, '$6 \sqrt{2}\frac{V}{L_{rms}^3}$');
+    max_y = DrawQualityHistogram(global_qualities, '');
     max_ys = [max_ys; max_y];
     title(algorithms_pl(alg_type));
     
