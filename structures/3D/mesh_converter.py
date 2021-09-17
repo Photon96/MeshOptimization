@@ -3,6 +3,8 @@ import numpy as np
 import scipy.io as sio
 import os
 
+VALID_MESH_TYPES = {'mat', 'vtk', 'mesh'}
+
 def convert_mesh_to_mat(file_name):
     with open(file_name, 'r') as input_mesh:
         input_mesh = input_mesh.read().splitlines()
@@ -169,15 +171,22 @@ def convert_mesh_to_vtk(file_name):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        sys.exit("Please provide input mesh and name of output mesh")
     
+
+    if len(sys.argv) < 3:
+        sys.exit("Please provide input mesh and name with type of output mesh")
+        
     input_mesh_full_name = sys.argv[1]
     output_mesh_full_name = sys.argv[2]
     
-    input_mesh_type = input_mesh_full_name[input_mesh_full_name.index('.') + 1:]
-    output_mesh_type = output_mesh_full_name[output_mesh_full_name.index('.') + 1:]
-    output_mesh_name = output_mesh_full_name[0:output_mesh_full_name.index('.')]
+    _, input_mesh_type = os.path.splitext(input_mesh_full_name)
+    output_mesh_name, output_mesh_type = os.path.splitext(output_mesh_full_name)
+
+    input_mesh_type = input_mesh_type.replace('.', '')
+    output_mesh_type = output_mesh_type.replace('.', '')
+
+    if input_mesh_type not in VALID_MESH_TYPES or output_mesh_type not in VALID_MESH_TYPES:
+        raise ValueError(f"Passed invalid mesh type {input_mesh_type}, {output_mesh_type}. Valid mesh types are {VALID_MESH_TYPES}")
 
     print("input mesh type: " + input_mesh_type)
     print("output mesh type: " + output_mesh_type)
