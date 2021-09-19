@@ -1,0 +1,12 @@
+{
+	"mesh_file": "D:\\magisterka\\MeshOptimization\\structures\\3D\\real structures\\d_Filtr_DDM_extended_irises",
+	"mesh_save": "D:\\magisterka\\MeshOptimization\\structures\\3D\\real structures\\optimized_d_Filtr_DDM_extended_irises",
+	"algorithm" : "DMO",
+	"quality_metric": "Volume-Length",
+	"quality_treshold": 0.33,
+	"max_sweeps": 3,
+	"grid_points": 2,
+	"real_structure": true,
+	"diagnostics": false,
+    "mesh_morphing": true
+}
