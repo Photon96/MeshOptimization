@@ -111,9 +111,9 @@ function [mesh, nodes_changed, cylinder_surface] = ExtendIris(mesh, cylinder_pos
     nodes_changed = setdiff(nodes_changed, nodes_inside_cylinder);
 
     move_inside = delta_z * exp(-c1 * abs(z_end - mesh.vertices(nodes_inside_radius_of_cylinder,3)));
-    move_outside = delta_z * exp(-c1 * abs(z_end - mesh.vertices(nodes_outside_radius_of_cylinder,3))).*exp(-c2*(distances(outside) - d_cylinder/2));
+    move_outside = delta_z * exp(-c2 * abs(z_end - mesh.vertices(nodes_outside_radius_of_cylinder,3))).*exp(-c3*(distances(outside) - d_cylinder/2));
 
-    mesh.vertices(cylinder_surface,3) = mesh.vertices(cylinder_surface,3) + delta_z*exp(-c3*abs(mesh.vertices(cylinder_surface,3) - z_end));
+    mesh.vertices(cylinder_surface,3) = mesh.vertices(cylinder_surface,3) + delta_z*exp(-c1*abs(mesh.vertices(cylinder_surface,3) - z_end));
 
     mesh.vertices(nodes_outside_radius_of_cylinder,3) = mesh.vertices(nodes_outside_radius_of_cylinder,3) + move_outside;
 

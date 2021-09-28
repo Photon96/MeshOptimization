@@ -107,5 +107,5 @@ free_vertices = mesh.free_vertices;
 
 pathname=fileparts('..\structures\3D\real structures\');
 matfile = fullfile(pathname, "d_Filtr_DDM_extended_irises.mat");
-save(matfile,...
-    'vertices', 'changed_vertices', 'tetrahedra', 'surface', 'free_vertices', 'cylinder_surfaces');
+% save(matfile,...
+%     'vertices', 'changed_vertices', 'tetrahedra', 'surface', 'free_vertices', 'cylinder_surfaces');
